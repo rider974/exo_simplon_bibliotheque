@@ -122,3 +122,45 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+-- Insérer des données dans les tables "livres", "adherents" et "emprunts".
+-- Sélectionner le nom, le prénom et l'adresse de tous les adhérents.
+select nom, prenom, adresse from adherants;
+-- Sélectionner le titre, l'auteur et l'année de publication de tous les livres empruntés.
+select titre, auteur, annee_publication from livres;
+-- Sélectionner le titre et l'auteur des livres empruntés par l'adhérent dont l'id est 2.
+select titre, auteur from livres 
+inner join emprunts on livres.id = emprunts.id_livre
+where id_adherant = 2;
+-- Sélectionner le nom et le prénom de l'adhérent qui a emprunté le livre dont l'id est 3.
+select ad.nom, ad.prenom from adherants as ad 
+inner join emprunts as emp on emp.id_adherant = ad.id
+where emp.id_livre = 3;
+-- Modifier la date de retour de l'emprunt dont l'id est 1.
+update emprunts set date_retour = '2023-06-13' where id = 1;
+-- Supprimer l'emprunt dont l'id est 2.
+delete from emprunts where id = 2;
+-- Ajouter une colonne "nombre_emprunts" à la table "adherents".
+alter table adherants add nombre_emprunts int;
+-- Mettre à jour la colonne "nombre_emprunts" en comptant le nombre d'emprunts pour chaque adhérent.
+UPDATE adherants INNER JOIN emprunts emp ON emp.id_adherant = adherants.id SET adherants.nombre_emprunts = (SELECT COUNT(*) FROM emprunts WHERE emprunts.id_adherant = adherants.id);
+-- Sélectionner le nom et le prénom de tous les adhérents qui ont emprunté plus de 5 livres.
+Select a.nom, a.prenom 
+FROM adherants a INNER JOIN  emprunts e
+ON a.id = e.id_adherant 
+WHERE a.nombre_emprunts > 5;
+-- Sélectionner le titre du livre le plus emprunté.
+-- SELECT  MAX(NbEmprunts.Nblivre), id   FROM (SELECT  livres.id, count(*) as Nblivre FROM livres INNER JOIN emprunts ON livres.id = emprunts.id_livre GROUP BY livres.id ) as NbEmprunts;
+
+select COUNT(*) from emprunts group by id_livre;
+
+
+-- Sélectionner le nom et le prénom de l'adhérent qui a emprunté le plus de livres.
+select nom, prenom from adherants where nombre_emprunts = (select max(nombre_emprunts) from adherants);
+-- Créer une vue "livres_empruntes" qui affiche le titre, l'auteur, l'année de publication et le nom de l'adhérent pour tous les livres empruntés.
+-- Sélectionner tous les emprunts qui ont été effectués avant le 1er janvier 2020.
+-- Supprimer tous les emprunts qui ont été effectués avant le 1er janvier 2018.
+-- Ajouter une contrainte de vérification pour empêcher les emprunts de livres pour une date de retour antérieure à la date d'emprunt.
+-- Ajouter une colonne "nombre_exemplaires" à la table "livres".
+-- Mettre à jour la colonne "nombre_exemplaires" en comptant le nombre d'exemplaires pour chaque livre.
+-- Ajouter un index sur la colonne "nom" de la table "adherents".
